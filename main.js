@@ -178,7 +178,7 @@ this.newPos = function() {
 			var myright = this.x+this.width;
 			var mybottom = this.y+this.height;
 
-			var cObj = objs[i];
+			var obj = objs[i];
 
 			var othertop = cObj.y;
 			var otherleft = cObj.x;
@@ -197,7 +197,7 @@ this.newPos = function() {
 
 			if(crash === true) {
 				if(myright > otherleft) {
-					this.x = cObj.left-this.width;
+					this.x = obj.x-this.width;
 				}
 			}
 	}
