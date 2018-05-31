@@ -163,12 +163,29 @@ this.newPos = function() {
 
 	}
 
-	this.setPosBack = function() {
-		var newX = this.x - this.speedX;
-		var newY = this.y - this.speedY;
+	this.prevPos = function(xBack, yBack) {
+		if(this.speedX > 0) {
+			//positive x speed
+		} else if(this.speedX === 0) {
+			//no speed x
+			xBack = 0;
+		} else {
+			//neg speed x
+			xBack = xBack*(-1);
+		}
 
-		this.x = newX;
-		this.y = newY;
+		if(this.speedXY > 0) {
+			//positive y speed
+		} else if(this.speedY === 0) {
+			//no speed y
+			yBack = 0;
+		} else {
+			//neg speed y
+			yBack = yBack*(-1);
+		}
+
+		this.x = this.x - xBack;
+		this.y = this.y - yBack;
 	}
 
 	this.checkCollide = function(objs) {
@@ -180,10 +197,10 @@ this.newPos = function() {
 
 			var obj = objs[i];
 
-			var othertop = cObj.y;
-			var otherleft = cObj.x;
-			var otherright = cObj.x+cObj.width;
-			var otherbottom = cObj.y+cObj.height;
+			var othertop = obj.y;
+			var otherleft = obj.x;
+			var otherright = obj.x+obj.width;
+			var otherbottom = obj.y+obj.height;
 
 			var crash = true;
 			
@@ -196,8 +213,49 @@ this.newPos = function() {
 			}
 
 			if(crash === true) {
-				if(myright > otherleft) {
-					this.x = obj.x-this.width;
+				//undo by 1 pixel until isnt colliding and use position to determine if above, to right, to bottom or left
+
+				var wasntCrash = false;
+				while(wasntCrash === false) {
+					this.prevPos(1, 1);
+
+					if ((this.y+this.height < othertop) ||
+					(this.y > otherbottom) ||
+					(this.x+this.width < otherleft) ||
+					(this.x > otherright)) {
+						wasntCrash = true;
+					}
+
+				}
+				console.log("No longer crash");
+				var relative;
+
+				if(this.y > otherbottom) {
+					relative = "below"
+				} 
+				else if(this.y-this.height < othertop) {
+					relative = "above";
+				}
+				else if(this.x > otherright) {
+					relative = "left";
+				} else {
+					relative = "right";
+				}
+
+				switch(relative) {
+					case "above": this.y = this.height+othertop;
+					this.speedY = 0;
+					break;
+					case "below": this.y = otherbottom;
+					this.speedY = 0;
+					break;
+					case "left": this.x = otherright;
+					this.speedX = 0;
+					break;
+					case "right": this.x = otherleft-this.height;
+					this.speedX = 0;
+					break;
+					default: break;
 				}
 			}
 	}
