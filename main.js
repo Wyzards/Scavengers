@@ -174,7 +174,7 @@ this.newPos = function() {
 			xBack = xBack*(-1);
 		}
 
-		if(this.speedXY > 0) {
+		if(this.speedY > 0) {
 			//positive y speed
 		} else if(this.speedY === 0) {
 			//no speed y
@@ -184,6 +184,7 @@ this.newPos = function() {
 			yBack = yBack*(-1);
 		}
 
+		console.log("YBack: " + yBack + " XBack: " + xBack);
 		this.x = this.x - xBack;
 		this.y = this.y - yBack;
 	}
@@ -214,7 +215,7 @@ this.newPos = function() {
 
 			if(crash === true) {
 				//undo by 1 pixel until isnt colliding and use position to determine if above, to right, to bottom or left
-
+				console.log("Speed X: " + this.speedX + " Speed Y: " + this.speedY);
 				var wasntCrash = false;
 				while(wasntCrash === false) {
 					this.prevPos(1, 1);
@@ -227,32 +228,37 @@ this.newPos = function() {
 					}
 
 				}
-				console.log("No longer crash");
+
 				var relative;
+
 
 				if(this.y > otherbottom) {
 					relative = "below"
 				} 
-				else if(this.y-this.height < othertop) {
+				else if(this.y+this.height < othertop) {
 					relative = "above";
+					//getting teleported to the bottom when touches top before "above" can register
 				}
 				else if(this.x > otherright) {
+					relative = "right";
+				} else if(this.x+this.width < otherleft) {
 					relative = "left";
 				} else {
-					relative = "right";
+					relative = "null";
 				}
 
+				console.log("Relative: " + relative);
 				switch(relative) {
-					case "above": this.y = this.height+othertop;
+					case "above": this.y = othertop-this.height-1;
 					this.speedY = 0;
 					break;
-					case "below": this.y = otherbottom;
+					case "below": this.y = otherbottom+1;
 					this.speedY = 0;
 					break;
-					case "left": this.x = otherright;
+					case "left": this.x = otherleft-this.width-1;
 					this.speedX = 0;
 					break;
-					case "right": this.x = otherleft-this.height;
+					case "right": this.x = otherright+1;
 					this.speedX = 0;
 					break;
 					default: break;
