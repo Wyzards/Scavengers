@@ -289,7 +289,7 @@ function gameLoop() {
 		//if 4200 >= 4200
 	} else if (piece.x >= gameArea.worldW-piece.width-(gameArea.canvas.width/2)) {
 		//this x val doesnt work and causes error?
-		translatedX = gameArea.worldW-gameArea.canvas.width-piece.width;
+		translatedX = gameArea.worldW-gameArea.canvas.width;
 		//can go 100 past world barrier?
 	} else {
 		translatedX = piece.x-(gameArea.canvas.width/2);
