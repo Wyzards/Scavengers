@@ -54,14 +54,17 @@ var aDown = false;
 var sDown = false;
 
 function startGame() {
-	piece = new component(20, 20, 50, 50, 'red');
+	piece = new component(0, 0, 50, 50, 'red');
 	obstacles.push(new component(gameArea.canvas.width/2, 100, 800, 200, 'blue'));
+	obstacles.push(new component(4250, 100, 100, 700, 'green'));
 	gameArea.start();
 }
 
 var gameArea = {
 	canvas : document.createElement('canvas'),
 	start : function() {
+		this.worldW = 5000;
+		this.worldH = 5000;
 		this.canvas.width = 1500;
 		this.canvas.height = 800;
 		this.context = this.canvas.getContext("2d");
@@ -69,8 +72,8 @@ var gameArea = {
 		this.interval = setInterval(gameLoop, 20);
 	},
 	clear: function() {
-		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-	}
+		this.context.clearRect(0, 0, this.worldW, this.worldH);
+	},
 }
 
 function component(x, y, width, height, color) {
@@ -130,17 +133,18 @@ this.newPos = function() {
 
 	var newX = this.x + this.speedX;
 	var newY = this.y + this.speedY;
+
 	var rEdge = newX + this.width;
 	var bEdge = newY + this.height;
 
-	var canvREdge = gameArea.canvas.width;
-	var canvBEdge = gameArea.canvas.height;
+	var REdge = gameArea.worldW;
+	var BEdge = gameArea.worldH;
 		//400
 
         //if 70 > 400
-        if(rEdge > canvREdge) {
+        if(rEdge > REdge) {
 			//at every right edge
-			newX = canvREdge-this.width;
+			newX = REdge-this.width;
 		}
 
 		if(newX < 0) {
@@ -148,9 +152,9 @@ this.newPos = function() {
 			newX = 0;
 		}
 
-		if(bEdge > canvBEdge) {
+		if(bEdge > BEdge) {
 			//at very bottom edge
-			newY = canvBEdge-this.height;
+			newY = BEdge-this.height;
 		}
 
 		if(newY < 0) {
@@ -211,9 +215,9 @@ this.newPos = function() {
 				(myright < otherleft) ||
 				(myleft > otherright)) {
 				crash = false;
-			}
+		}
 
-			if(crash === true) {
+		if(crash === true) {
 				//undo by 1 pixel until isnt colliding and use position to determine if above, to right, to bottom or left
 				console.log("Speed X: " + this.speedX + " Speed Y: " + this.speedY);
 				var wasntCrash = false;
@@ -221,22 +225,21 @@ this.newPos = function() {
 					this.prevPos(1, 1);
 
 					if ((this.y+this.height < othertop) ||
-					(this.y > otherbottom) ||
-					(this.x+this.width < otherleft) ||
-					(this.x > otherright)) {
+						(this.y > otherbottom) ||
+						(this.x+this.width < otherleft) ||
+						(this.x > otherright)) {
 						wasntCrash = true;
-					}
-
 				}
+			}
 
-				var relative;
+			var relative;
 
 
-				if(this.y > otherbottom) {
-					relative = "below"
-				} 
-				else if(this.y+this.height < othertop) {
-					relative = "above";
+			if(this.y > otherbottom) {
+				relative = "below";
+			} 
+			else if(this.y+this.height < othertop) {
+				relative = "above";
 					//getting teleported to the bottom when touches top before "above" can register
 				}
 				else if(this.x > otherright) {
@@ -264,8 +267,8 @@ this.newPos = function() {
 					default: break;
 				}
 			}
+		}
 	}
-}
 }
 
 function gameLoop() {
@@ -273,11 +276,40 @@ function gameLoop() {
 	gameArea.clear();
 	piece.move();
 	piece.newPos();
+	console.log(piece.x + ", " + piece.y);
 	piece.checkCollide(obstacles);
-	piece.update();
-	for(var i = 0; i < obstacles.length; i++) {
-		obstacles[i].update();
+
+	var translatedX;
+	var translatedY;
+
+	if(piece.x <= gameArea.canvas.width/2) {
+		translatedX = 0;
+		//if 4200 >= 5000-50-(1500/2)
+		//if 4200 >= 4950 - (750)
+		//if 4200 >= 4200
+	} else if (piece.x >= gameArea.worldW-piece.width-(gameArea.canvas.width/2)) {
+		//this x val doesnt work and causes error?
+		translatedX = gameArea.worldW-gameArea.canvas.width-piece.width;
+		//can go 100 past world barrier?
+	} else {
+		translatedX = piece.x-(gameArea.canvas.width/2);
 	}
+
+	if(piece.y <= gameArea.canvas.height/2 || piece.y >= gameArea.worldH-(gameArea.canvas.height)) {
+		translatedY = 0;
+	} else {
+		translatedY = piece.y-(gameArea.canvas.height/2);
+	}
+
+    // original: gameArea.context.translate(0-(piece.x-(gameArea.canvas.width/2)), 0-(piece.y-(gameArea.canvas.height/2)));
+    gameArea.context.translate(0 - translatedX, 0-translatedY);
+    piece.update();
+    for(var i = 0; i < obstacles.length; i++) {
+    	obstacles[i].update();
+    }
+
+
+    gameArea.context.translate(translatedX, translatedY);
 
 }
 
