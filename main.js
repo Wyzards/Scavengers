@@ -282,7 +282,7 @@ function gameLoop() {
 	var translatedX;
 	var translatedY;
 
-	if(piece.x <= gameArea.canvas.width/2) {
+	if(piece.x <= gameArea.canvas.width/2 || piece.x >= gameArea.worldW-piece.width) {
 		translatedX = 0;
 		//if 4200 >= 5000-50-(1500/2)
 		//if 4200 >= 4950 - (750)
