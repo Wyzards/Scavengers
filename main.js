@@ -230,14 +230,13 @@ this.newPos = function() {
 						(this.x > otherright)) {
 						wasntCrash = true;
 				}
-
 			}
 
 			var relative;
 
 
 			if(this.y > otherbottom) {
-				relative = "below"
+				relative = "below";
 			} 
 			else if(this.y+this.height < othertop) {
 				relative = "above";
@@ -285,8 +284,13 @@ function gameLoop() {
 
 	if(piece.x <= gameArea.canvas.width/2) {
 		translatedX = 0;
+		//if 4200 >= 5000-50-(1500/2)
+		//if 4200 >= 4950 - (750)
+		//if 4200 >= 4200
 	} else if (piece.x >= gameArea.worldW-piece.width-(gameArea.canvas.width/2)) {
-		translatedX = gameArea.worldW;
+		//this x val doesnt work and causes error?
+		translatedX = gameArea.worldW-gameArea.canvas.width-piece.width;
+		//can go 100 past world barrier?
 	} else {
 		translatedX = piece.x-(gameArea.canvas.width/2);
 	}
