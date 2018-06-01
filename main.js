@@ -287,16 +287,18 @@ function gameLoop() {
 		//if 4200 >= 5000-50-(1500/2)
 		//if 4200 >= 4950 - (750)
 		//if 4200 >= 4200
-	} else if (piece.x >= gameArea.worldW-piece.width-(gameArea.canvas.width/2)) {
+	} else if (piece.x >= gameArea.worldW-(gameArea.canvas.width/2)) {
 		//this x val doesnt work and causes error?
-		translatedX = gameArea.worldW-gameArea.canvas.width-piece.width;
+		translatedX = gameArea.worldW-gameArea.canvas.width;
 		//can go 100 past world barrier?
 	} else {
 		translatedX = piece.x-(gameArea.canvas.width/2);
 	}
 
-	if(piece.y <= gameArea.canvas.height/2 || piece.y >= gameArea.worldH-(gameArea.canvas.height)) {
+	if(piece.y <= gameArea.canvas.height/2) {
 		translatedY = 0;
+	} else if(piece.y >= gameArea.worldH-(gameArea.canvas.height/2)) {
+	    translatedY = gameArea.worldH-gameArea.canvas.height;
 	} else {
 		translatedY = piece.y-(gameArea.canvas.height/2);
 	}
