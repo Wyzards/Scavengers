@@ -1,4 +1,230 @@
+//Component Variations
+class Component {
+		constructor(x, y, width, height, collision) {
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+			this.collision = collision;
+			this.speedX = 0;
+			this.speedY = 0;
+		}
+
+		//Used increase speedX and speedY of 
+		move() {
+
+			//if not pressing movement key, slow down to speed 0
+			if(!wDown && !sDown && !aDown && !dDown) {
+		    	//make y go towards 0
+		    	if(this.speedY > 0) {
+		    		this.speedY--;
+		    	}
+
+		    	if(this.speedY < 0) {
+		    		this.speedY++;
+		    	}
+
+		    	if(this.speedX > 0) {
+		    		this.speedX--;
+		    	}
+
+		    	if(this.speedX < 0) {
+		    		this.speedX++;
+		    	}
+		    }
+
+		    //Increase speed when key is held down
+		    if(wDown) {
+		    	moveUp(this);
+		    }
+
+		    if(aDown) {
+		    	moveLeft(this);
+		    }
+
+		    if(sDown) {
+		    	moveDown(this);
+		    }
+
+		    if(dDown) {
+		    	moveRight(this);
+		    }
+		}
+
+		//Used to change grid position of component
+		newPos() {
+			var newX = this.x + this.speedX;
+			var newY = this.y + this.speedY;
+
+			var rEdge = newX + this.width;
+			var bEdge = newY + this.height;
+
+			var REdge = gameArea.worldW;
+			var BEdge = gameArea.worldH;
+			//400
+
+	        //if 70 > 400
+	        if(rEdge > REdge) {
+				newX = REdge-this.width;
+			}
+
+			if(newX < 0) {
+				newX = 0;
+			}
+
+			if(bEdge > BEdge) {
+				newY = BEdge-this.height;
+			}
+
+			if(newY < 0) {
+				newY = 0;
+			}
+
+			this.x = newX;
+			this.y = newY;
+		}
+
+
+		//Used to move the component in the opposite direction of its current path by the amount specified
+		prevPos(xBack, yBack) {
+
+			//Determining if xBack and yBack should be positive or negative
+			if(this.speedX > 0) {
+			} 
+			else if(this.speedX === 0) {
+				xBack = 0;
+
+			} 
+			else {
+				xBack = xBack*(-1);
+			}
+
+			if(this.speedY > 0) {
+			} 
+			else if(this.speedY === 0) {
+				yBack = 0;
+			}
+			else {
+				yBack = yBack*(-1);
+			}
+
+			this.x = this.x - xBack;
+			this.y = this.y - yBack;
+		}
+
+		checkCollide(objs) {
+			//for every object in array of objects, check if this is colliding with it
+			for(var i = 0; i < objs.length; i++) {
+				var mytop = this.y;
+				var myleft = this.x;
+				var myright = this.x+this.width;
+				var mybottom = this.y+this.height;
+
+				var obj = objs[i];
+
+				var othertop = obj.y;
+				var otherleft = obj.x;
+				var otherright = obj.x+obj.width;
+				var otherbottom = obj.y+obj.height;
+
+				if(obj.collision === false) {
+					return;					
+				}
+
+				var crash = true;
+
+				
+
+				if ((mybottom < othertop) ||
+					(mytop > otherbottom) ||
+					(myright < otherleft) ||
+					(myleft > otherright)) {
+					crash = false;
+				}
+
+				if(crash === true) {
+					var wasntCrash = false;
+					while(wasntCrash === false) {
+						this.prevPos(1, 1);
+
+						if ((this.y+this.height < othertop) ||
+							(this.y > otherbottom) ||
+							(this.x+this.width < otherleft) ||
+							(this.x > otherright)) {
+							wasntCrash = true;
+						}
+					}
+
+					var relative;
+
+					if(this.y > otherbottom) {
+						relative = "below";
+					} 
+					else if(this.y+this.height < othertop) {
+						relative = "above";
+					}
+					else if(this.x > otherright) {
+						relative = "right";
+					}
+					else if(this.x+this.width < otherleft) {
+						relative = "left";
+					}
+					else {
+						relative = "null";
+					}
+
+					console.log("Relative: " + relative);
+					switch(relative) {
+						case "above": this.y = othertop-this.height-1;
+						this.speedY = 0;
+						break;
+						case "below": this.y = otherbottom+1;
+						this.speedY = 0;
+						break;
+						case "left": this.x = otherleft-this.width-1;
+						this.speedX = 0;
+						break;
+						case "right": this.x = otherright+1;
+						this.speedX = 0;
+						break;
+						default: break;
+					}
+				}
+			}
+		}
+		//end of component class
+	}
+
+	class ImageComp extends Component {
+		constructor(x, y, width, height, collision, imageId, hasInteract) {
+			super(x, y, width, height, collision);
+			this.hasInteract = hasInteract;
+			this.imageSrc = imageId
+		}
+
+		update() {
+			var context = gameArea.context;
+			var image = document.getElementById(this.imageSrc);
+			context.drawImage(image, this.x, this.y, this.width, this.height);
+		}
+	}
+
+	class ColorComp extends Component {
+		constructor(x, y, width, height, collision, color, hasInteract) {
+			super(x, y, width, height, collision);
+			this.hasInteract = hasInteract;
+			this.color = color;
+		}
+
+		update() {
+			var context = gameArea.context;
+			context.fillStyle = this.color;
+			context.fillRect(this.x, this.y, this.width, this.height);
+		}
+	}
+
 $(document).ready(() => {
+	console.log("javascript still linked");
 	startGame();
 	main();
 });
@@ -41,12 +267,11 @@ function main() {
 			default:
 			break;
 		}
-
-
 	});
 }
 
-var obstacles = [];
+var frontObs = [];
+var backObs = [];
 var piece;
 var dDown = false;
 var wDown = false;
@@ -54,9 +279,11 @@ var aDown = false;
 var sDown = false;
 
 function startGame() {
-	piece = new component(0, 0, 50, 50, 'red');
-	obstacles.push(new component(gameArea.canvas.width/2, 100, 800, 200, 'blue'));
-	obstacles.push(new component(4250, 100, 100, 700, 'green'));
+
+	piece = new ColorComp(0, 0, 50, 50, true, 'red', false);
+	frontObs.push(new ColorComp(gameArea.canvas.width/2, 100, 800, 200, true, 'blue', false));
+	frontObs.push(new ColorComp(4250, 100, 100, 700, true, 'green', false));
+	backObs.push(new ImageComp(0, 0, 5000, 2000, false, 'background', false));
 	gameArea.start();
 }
 
@@ -76,208 +303,14 @@ var gameArea = {
 	},
 }
 
-function component(x, y, width, height, color) {
-	this.x = x;
-	this.y = y;
-	this.speedX = 0;
-	this.speedY = 0;
-	this.width = width;
-	this.height = height;
-	this.update = function() {
-		var context = gameArea.context;
-		context.fillStyle = color;
-		context.fillRect(this.x, this.y, this.width, this.height);
-	}
-	
-	this.move = function() {
-		if(!wDown && !sDown && !aDown && !dDown) {
-    	//make y go towards 0
-    	if(this.speedY > 0) {
-    		this.speedY--;
-    	}
-
-    	if(this.speedY < 0) {
-    		this.speedY++;
-    	}
-
-    	if(this.speedX > 0) {
-    		this.speedX--;
-    	}
-
-    	if(this.speedX < 0) {
-    		this.speedX++;
-    	}
-    }
-
-    //movement keypresses
-    if(wDown) {
-    	moveUp(this);
-    }
-
-    if(aDown) {
-    	moveLeft(this);
-    }
-
-    if(sDown) {
-    	moveDown(this);
-    }
-
-    if(dDown) {
-    	moveRight(this);
-    }
-}
-
-
-
-this.newPos = function() {
-
-	var newX = this.x + this.speedX;
-	var newY = this.y + this.speedY;
-
-	var rEdge = newX + this.width;
-	var bEdge = newY + this.height;
-
-	var REdge = gameArea.worldW;
-	var BEdge = gameArea.worldH;
-		//400
-
-        //if 70 > 400
-        if(rEdge > REdge) {
-			//at every right edge
-			newX = REdge-this.width;
-		}
-
-		if(newX < 0) {
-			//at very left edge
-			newX = 0;
-		}
-
-		if(bEdge > BEdge) {
-			//at very bottom edge
-			newY = BEdge-this.height;
-		}
-
-		if(newY < 0) {
-			//at very top edge
-			newY = 0;
-		}
-
-		this.x = newX;
-		this.y = newY;
-
-	}
-
-	this.prevPos = function(xBack, yBack) {
-		if(this.speedX > 0) {
-			//positive x speed
-		} else if(this.speedX === 0) {
-			//no speed x
-			xBack = 0;
-		} else {
-			//neg speed x
-			xBack = xBack*(-1);
-		}
-
-		if(this.speedY > 0) {
-			//positive y speed
-		} else if(this.speedY === 0) {
-			//no speed y
-			yBack = 0;
-		} else {
-			//neg speed y
-			yBack = yBack*(-1);
-		}
-
-		console.log("YBack: " + yBack + " XBack: " + xBack);
-		this.x = this.x - xBack;
-		this.y = this.y - yBack;
-	}
-
-	this.checkCollide = function(objs) {
-		for(var i = 0; i < objs.length; i++) {
-			var mytop = this.y;
-			var myleft = this.x;
-			var myright = this.x+this.width;
-			var mybottom = this.y+this.height;
-
-			var obj = objs[i];
-
-			var othertop = obj.y;
-			var otherleft = obj.x;
-			var otherright = obj.x+obj.width;
-			var otherbottom = obj.y+obj.height;
-
-			var crash = true;
-			
-
-			if ((mybottom < othertop) ||
-				(mytop > otherbottom) ||
-				(myright < otherleft) ||
-				(myleft > otherright)) {
-				crash = false;
-		}
-
-		if(crash === true) {
-				//undo by 1 pixel until isnt colliding and use position to determine if above, to right, to bottom or left
-				console.log("Speed X: " + this.speedX + " Speed Y: " + this.speedY);
-				var wasntCrash = false;
-				while(wasntCrash === false) {
-					this.prevPos(1, 1);
-
-					if ((this.y+this.height < othertop) ||
-						(this.y > otherbottom) ||
-						(this.x+this.width < otherleft) ||
-						(this.x > otherright)) {
-						wasntCrash = true;
-				}
-			}
-
-			var relative;
-
-
-			if(this.y > otherbottom) {
-				relative = "below";
-			} 
-			else if(this.y+this.height < othertop) {
-				relative = "above";
-					//getting teleported to the bottom when touches top before "above" can register
-				}
-				else if(this.x > otherright) {
-					relative = "right";
-				} else if(this.x+this.width < otherleft) {
-					relative = "left";
-				} else {
-					relative = "null";
-				}
-
-				console.log("Relative: " + relative);
-				switch(relative) {
-					case "above": this.y = othertop-this.height-1;
-					this.speedY = 0;
-					break;
-					case "below": this.y = otherbottom+1;
-					this.speedY = 0;
-					break;
-					case "left": this.x = otherleft-this.width-1;
-					this.speedX = 0;
-					break;
-					case "right": this.x = otherright+1;
-					this.speedX = 0;
-					break;
-					default: break;
-				}
-			}
-		}
-	}
-}
-
 function gameLoop() {
 	//drawing
 	gameArea.clear();
 	piece.move();
 	piece.newPos();
 	console.log(piece.x + ", " + piece.y);
-	piece.checkCollide(obstacles);
+	piece.checkCollide(frontObs);
+	piece.checkCollide(backObs);
 
 	var translatedX;
 	var translatedY;
@@ -305,9 +338,12 @@ function gameLoop() {
 
     // original: gameArea.context.translate(0-(piece.x-(gameArea.canvas.width/2)), 0-(piece.y-(gameArea.canvas.height/2)));
     gameArea.context.translate(0 - translatedX, 0-translatedY);
+    for(var i = 0; i < backObs.length; i++) {
+    	backObs[i].update();
+    }
     piece.update();
-    for(var i = 0; i < obstacles.length; i++) {
-    	obstacles[i].update();
+    for(var i = 0; i < frontObs.length; i++) {
+    	frontObs[i].update();
     }
 
 
