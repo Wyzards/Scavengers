@@ -350,7 +350,6 @@ function stopMove() {
 	piece.speedY = 0;
 	piece.speedX = 0;
 }
-);
 		    }
 		}
 
