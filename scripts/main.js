@@ -1,6 +1,6 @@
 //Component Variations
 class Component {
-		constructor(x, y, width, height, collision) {
+		constructor(x, y, width, height, collision, static) {
 			this.x = x;
 			this.y = y;
 			this.colX = x;
@@ -11,6 +11,7 @@ class Component {
 			this.speedX = 0;
 			this.speedY = 0;
 			this.gravity = 0.5;
+			this.static = static;
 		}
 
 		//Used increase speedX and speedY of 
@@ -185,8 +186,8 @@ class Component {
 	}
 
 	class ImageComp extends Component {
-		constructor(x, y, width, height, collision, imageId, hasInteract) {
-			super(x, y, width, height, collision);
+		constructor(x, y, width, height, collision, imageId, hasInteract, static) {
+			super(x, y, width, height, collision, static);
 			this.hasInteract = hasInteract;
 			this.imageSrc = imageId
 		}
@@ -205,8 +206,8 @@ class Component {
 	}
 
 	class ColorComp extends Component {
-		constructor(x, y, width, height, collision, color, hasInteract) {
-			super(x, y, width, height, collision);
+		constructor(x, y, width, height, collision, color, hasInteract, static) {
+			super(x, y, width, height, collision, static);
 			this.hasInteract = hasInteract;
 			this.color = color;
 		}
@@ -261,13 +262,13 @@ var sDown = false;
 
 function startGame() {
 
-	piece = new ColorComp(0, 0, 50, 50, true, 'red', false);
-	frontObs.push(new ColorComp(gameArea.canvas.width/2, 100, 800, 200, true, 'blue', false));
-	frontObs.push(new ColorComp(4250, 100, 100, 700, true, 'green', false));
-	frontObs.push(new ImageComp(3500,2000-521, 200, 150, true, 'cat', false));
-	backObs.push(new ImageComp(0, 0, 5000, 2000, false, 'background', false));
-	frontObs.push(new ColorComp(200, 200, 400, 100, true, 'yellow', false));
-	frontObs.push(new ColorComp(500, 1400,400, 100, true, 'black', false));
+	piece = new ColorComp(0, 0, 50, 50, true, 'red', false, false);
+	frontObs.push(new ColorComp(gameArea.canvas.width/2, 100, 800, 200, true, 'blue', false, false));
+	frontObs.push(new ColorComp(4250, 100, 100, 700, true, 'green', false, true));
+	frontObs.push(new ImageComp(3500,2000-521, 200, 150, true, 'cat', false, true));
+	backObs.push(new ImageComp(0, 0, 5000, 2000, false, 'background', false, true));
+	frontObs.push(new ColorComp(200, 200, 400, 100, true, 'yellow', false, true));
+	frontObs.push(new ColorComp(500, 1400,400, 100, true, 'black', false, true));
 	gameArea.start();
 }
 
@@ -327,6 +328,9 @@ function gameLoop() {
     }
     piece.update();
     for(var i = 0; i < frontObs.length; i++) {
+	if(frontObs[i].static === false) {
+	    frontObs[i].newPos();
+	}
     	frontObs[i].update();
     }
 
