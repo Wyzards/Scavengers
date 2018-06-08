@@ -54,7 +54,6 @@ class Component {
 			var REdge = gameArea.worldW;
 			var BEdge = gameArea.worldH;
 			//400
-
 	        //if 70 > 400
 	        if(rEdge > REdge) {
 				newX = REdge-this.width;
@@ -329,9 +328,9 @@ function gameLoop() {
     }
     piece.update();
     for(var i = 0; i < frontObs.length; i++) {
-	if(frontObs[i].moves === true) {
+	//if(frontObs[i].moves === true) {
 	    frontObs[i].newPos();
-	}
+	//}
     	frontObs[i].update();
     }
 
