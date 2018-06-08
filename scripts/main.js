@@ -262,13 +262,14 @@ var sDown = false;
 
 function startGame() {
 
-	piece = new ColorComp(0, 0, 50, 50, true, 'red', false, false);
+	piece = new ColorComp(0, 0, 50, 50, true, 'red', false, true);
 	frontObs.push(new ColorComp(gameArea.canvas.width/2, 100, 800, 200, true, 'blue', false, false));
-	frontObs.push(new ColorComp(4250, 100, 100, 700, true, 'green', false, true));
+	frontObs.push(new ColorComp(4250, 100, 100, 700, true, 'green', false, false));
 	frontObs.push(new ImageComp(3500,2000-521, 200, 150, true, 'cat', false, true));
-	backObs.push(new ImageComp(0, 0, 5000, 2000, false, 'background', false, true));
-	frontObs.push(new ColorComp(200, 200, 400, 100, true, 'yellow', false, true));
-	frontObs.push(new ColorComp(500, 1400,400, 100, true, 'black', false, true));
+	backObs.push(new ImageComp(0, 0, 5000, 2000, false, 'background', false, false));
+	frontObs.push(new ColorComp(200, 200, 400, 100, true, 'yellow', false, false));
+	frontObs.push(new ColorComp(500, 1400,400, 100, true, 'black', false, false
+				   ));
 	gameArea.start();
 }
 
@@ -328,7 +329,7 @@ function gameLoop() {
     }
     piece.update();
     for(var i = 0; i < frontObs.length; i++) {
-	if(frontObs[i].static === false) {
+	if(frontObs[i].moves === true) {
 	    frontObs[i].newPos();
 	}
     	frontObs[i].update();
