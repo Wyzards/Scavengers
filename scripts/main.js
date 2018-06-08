@@ -1,6 +1,6 @@
 //Component Variations
 class Component {
-		constructor(x, y, width, height, collision, static) {
+		constructor(x, y, width, height, collision, moves) {
 			this.x = x;
 			this.y = y;
 			this.colX = x;
@@ -11,7 +11,7 @@ class Component {
 			this.speedX = 0;
 			this.speedY = 0;
 			this.gravity = 0.5;
-			this.static = static;
+			this.moves = moves;
 		}
 
 		//Used increase speedX and speedY of 
@@ -186,8 +186,8 @@ class Component {
 	}
 
 	class ImageComp extends Component {
-		constructor(x, y, width, height, collision, imageId, hasInteract, static) {
-			super(x, y, width, height, collision, static);
+		constructor(x, y, width, height, collision, imageId, hasInteract, moves) {
+			super(x, y, width, height, collision, moves);
 			this.hasInteract = hasInteract;
 			this.imageSrc = imageId
 		}
@@ -206,8 +206,8 @@ class Component {
 	}
 
 	class ColorComp extends Component {
-		constructor(x, y, width, height, collision, color, hasInteract, static) {
-			super(x, y, width, height, collision, static);
+		constructor(x, y, width, height, collision, color, hasInteract, moves) {
+			super(x, y, width, height, collision, moves);
 			this.hasInteract = hasInteract;
 			this.color = color;
 		}
